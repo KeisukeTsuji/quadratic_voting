@@ -10,7 +10,7 @@ const App = () => {
   };
 
   return (
-    <>
+    <div>
       <h1>quadoratic voting</h1>
       <ul>
         {choices.map((choice, index) => {
@@ -26,20 +26,7 @@ const App = () => {
         />
         <button onClick={addTodo}>追加</button>
       </div>
-      <style>{`
-        h1 {
-          text-align: center;
-        }
-        .form {
-          display: flex;
-          justify-content: center;
-        }
-        ul {
-          width: 200px;
-          margin: 10px auto;
-        }
-      `}</style>
-    </>
+    </div>
   );
 };
 
