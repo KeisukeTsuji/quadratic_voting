@@ -2,6 +2,7 @@ import * as React from "react";
 import App, { AppProps } from "next/app";
 import 'sanitize.css'
 import './styles.css'
+import "@mdi/font/css/materialdesignicons.css";
 
 class MyApp extends App {
   render(): JSX.Element {
