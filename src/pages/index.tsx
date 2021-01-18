@@ -1,12 +1,26 @@
 import { useState } from "react";
+import { db } from "@/config/db";
 
 const App = () => {
   const [choices, setItems] = useState([]);
   const [tmpChoice, setTmpItem] = useState("");
 
-  const addTodo = () => {
+  const addItem = () => {
     setItems([tmpChoice, ...choices]);
     setTmpItem("");
+  };
+
+  const saveTargets = async () => {
+    const docId = db.collection("target").doc().id;
+    await db.collection("target").doc(docId).set({
+      targetId: "title1",
+      createdAt: new Date(),
+    });
+    await db
+      .collection("target")
+      .doc(docId)
+      .collection("item")
+      .add({ name: "テスト太郎", numberOfVote: "100" });
   };
 
   return (
@@ -18,7 +32,7 @@ const App = () => {
           onChange={(e) => setTmpItem(e.target.value)}
           value={tmpChoice}
         />
-        <button onClick={addTodo}>
+        <button onClick={addItem}>
           <span className="mdi mdi-plus"></span>
         </button>
       </div>
@@ -31,7 +45,10 @@ const App = () => {
           );
         })}
       </ul>
-      <div className="text-purple-500 hover:bg-purple-200 cursor-pointer">
+      <div
+        onClick={saveTargets}
+        className="text-purple-500 hover:bg-purple-200 cursor-pointer"
+      >
         save
       </div>
       <style>{`
