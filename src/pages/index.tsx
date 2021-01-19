@@ -2,6 +2,7 @@ import { useState } from "react";
 import { db } from "@/config/db";
 
 const App = () => {
+  const [question, setQuestion] = useState("");
   const [choices, setItems] = useState([]);
   const [tmpChoice, setTmpItem] = useState("");
 
@@ -13,18 +14,28 @@ const App = () => {
   const saveTargets = async () => {
     const docId = db.collection("target").doc().id;
     await db.collection("target").doc(docId).set({
-      targetId: "title1",
+      question: question,
       createdAt: new Date(),
     });
-    await db
-      .collection("target")
-      .doc(docId)
-      .collection("item")
-      .add({ name: "テスト太郎", numberOfVote: "100" });
+    for (const choice of choices) {
+      await db
+        .collection("target")
+        .doc(docId)
+        .collection("item")
+        .add({ name: choice, numberOfVote: 0 });
+    }
   };
 
   return (
     <div className="max-w-screen-sm m-auto h-screen bg-gray-50 p-4">
+      <div className="contents">
+        <input
+          type="text"
+          name="question"
+          onChange={(e) => setQuestion(e.target.value)}
+          value={question}
+        />
+      </div>
       <div className="form">
         <input
           type="text"
