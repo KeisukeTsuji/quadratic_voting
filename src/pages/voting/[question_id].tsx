@@ -1,35 +1,73 @@
-import { useState } from "react";
-import { useRouter } from 'next/router';
+import { useEffect, useState } from "react";
 import { db } from "@/config/db";
 
-const App = () => {
+const QuestionId = () => {
+  const [question, setQuestion] = useState("");
+  const [items, setItems] = useState([])
 
-  const router = useRouter();
-  const questionId = router.query.question_id;
+  useEffect(() => {
+    async function getTargetAndItem() {
+      await getTarget()
+      await getItems()
+    }
+    getTargetAndItem()
+  }, [])
 
-  const getTarget = async () => {
-    try {
-      if (typeof (questionId) === "string") {
-        const postRef = db.collection('target').doc(questionId)
-        const postDoc = await postRef.get()
-        if (postDoc.exists) {
-          console.log(postDoc.data())
-        } else {
-          console.log('No such document!')
-        }
-      }
-    } catch (err) {
-      console.error(`Error: ${JSON.stringify(err)}`)
+  const getQuestionId = () => {
+    return 'YHzLwu1WObmuUfRW9WVK'
+  }
+
+  const getTargetRef = async () => {
+    const questionId = getQuestionId()
+    if (typeof (questionId) === "string") {
+      return await db.collection('target').doc(questionId);
+    } else {
+      console.log("questionId is not string")
     }
   }
 
-  getTarget()
+  const getTarget = async () => {
+    try {
+      const targetRef = await getTargetRef()
+      const targetDoc = await targetRef.get()
+      if (targetDoc.exists) {
+        setQuestion(targetDoc.data().question)
+      } else {
+        console.log('No such document!')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const getItems = async () => {
+    try {
+      if (getTargetRef()) {
+        const allItems = (await getTargetRef()).collection('item')
+        const itemsGot = await allItems.get()
+        let tmpItems: Object[] = []
+        itemsGot.forEach(doc => {
+          if (doc.exists) {
+            tmpItems.push(doc.data())
+          }
+        })
+        setItems(tmpItems)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <div>
-      voting page
+      <p>{question}</p>
+      {items.map((item, index) => (
+        <div key={index}>
+          {item.name}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default App;
+export default QuestionId;
